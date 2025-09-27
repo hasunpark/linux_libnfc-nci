@@ -44,6 +44,7 @@ extern phTmlNfc_Context_t* gpphTmlNfc_Context;
 NfccAltTransport::NfccAltTransport() {
   iEnableFd = 0;
   iInterruptFd = 0;
+  iFwDnldFd = 0;
 }
 
 /*******************************************************************************
@@ -447,6 +448,9 @@ int NfccAltTransport::ConfigurePin()
   iEnableFd = verifyPin(PIN_ENABLE, 1, EDGE_NONE);
   if (iEnableFd < 0) return (NFCSTATUS_INVALID_DEVICE);
   iFwDnldFd = verifyPin(PIN_FWDNLD, 1, EDGE_NONE);
-  if (iFwDnldFd < 0) return (NFCSTATUS_INVALID_DEVICE);
+  if (iFwDnldFd <= 0) {
+    NXPLOG_TML_W("FWDNLD pin %d unavailable; continuing without it", PIN_FWDNLD);
+    iFwDnldFd = 0;
+  }
   return NFCSTATUS_SUCCESS;
 }
